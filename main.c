@@ -3,43 +3,19 @@
 #include <time.h>    // pour la seed du random
 #include <stdbool.h> // pour bool, true, false
 
-int cube(int x, int y, bool grid[35][35], int size) {
-    x--; y--;
-    if (x < 0 || y < 0 || x >= size-1 || y >= size-1) {
-        printf("Coordonnees hors limites.\n");
-        return 1;
-    }
-
-    if (grid[x][y] == false &&
-        grid[x+1][y] == false &&
-        grid[x][y+1] == false &&
-        grid[x+1][y+1] == false) {
-
-        grid[x][y] = true;
-        grid[x+1][y] = true;
-        grid[x][y+1] = true;
-        grid[x+1][y+1] = true;
-    } else {
-        printf("Emplacement non valide.\n");
-        return 1;
-    }
-    return 0;
-}
-int pieceO(int x, int y, bool grid[35][35], int size) {
-    x--; y--;
-    if (x < 0 || y < 0 || x+1 >= size || y+1 >= size) return 1;
+int pieceO(int x, int y, bool grid[35][35], int sizeX, int sizeY) {
+    if (x < 0 || y < 0 || x+1 >= sizeX || y+1 >= sizeY) return 1;
     if (!grid[y][x] && !grid[y][x+1] && !grid[y+1][x] && !grid[y+1][x+1]) {
         grid[y][x] = grid[y][x+1] = grid[y+1][x] = grid[y+1][x+1] = true;
         return 0;
     }
     return 1;
 }
-int pieceI(int x, int y, int rotate, bool grid[35][35], int size) {
-    x--; y--;
+int pieceI(int x, int y, int rotate, bool grid[35][35], int sizeX, int sizeY) {
     switch (rotate % 4) {
         case 0:
         case 2: // horizontal
-            if (x < 0 || y < 0 || x+3 >= size) return 1;
+            if (x < 0 || y < 0 || x+3 >= sizeX) return 1;
             if (!grid[y][x] && !grid[y][x+1] && !grid[y][x+2] && !grid[y][x+3]) {
                 grid[y][x] = grid[y][x+1] = grid[y][x+2] = grid[y][x+3] = true;
                 return 0;
@@ -47,7 +23,7 @@ int pieceI(int x, int y, int rotate, bool grid[35][35], int size) {
             break;
         case 1:
         case 3: // vertical
-            if (x < 0 || y < 0 || y+3 >= size) return 1;
+            if (x < 0 || y < 0 || y+3 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y+1][x] && !grid[y+2][x] && !grid[y+3][x]) {
                 grid[y][x] = grid[y+1][x] = grid[y+2][x] = grid[y+3][x] = true;
                 return 0;
@@ -56,32 +32,31 @@ int pieceI(int x, int y, int rotate, bool grid[35][35], int size) {
     }
     return 1;
 }
-int pieceT(int x, int y, int rotate, bool grid[35][35], int size) {
-    x--; y--;
+int pieceT(int x, int y, int rotate, bool grid[35][35], int sizeX, int sizeY) {
     switch (rotate % 4) {
         case 0: // ┴
-            if (x < 0 || y < 0 || x+2 >= size || y+1 >= size) return 1;
+            if (x < 0 || y < 0 || x+2 >= sizeX || y+1 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y][x+1] && !grid[y][x+2] && !grid[y+1][x+1]) {
                 grid[y][x] = grid[y][x+1] = grid[y][x+2] = grid[y+1][x+1] = true;
                 return 0;
             }
             break;
         case 1: // ┤
-            if (x < 0 || y < 0 || x+1 >= size || y+2 >= size) return 1;
+            if (x < 0 || y < 0 || x+1 >= sizeX || y+2 >= sizeY) return 1;
             if (!grid[y][x+1] && !grid[y+1][x+1] && !grid[y+2][x+1] && !grid[y+1][x]) {
                 grid[y][x+1] = grid[y+1][x+1] = grid[y+2][x+1] = grid[y+1][x] = true;
                 return 0;
             }
             break;
         case 2: // ┬
-            if (x < 0 || y < 0 || x+2 >= size || y+1 >= size) return 1;
+            if (x < 0 || y < 0 || x+2 >= sizeX || y+1 >= sizeY) return 1;
             if (!grid[y+1][x] && !grid[y+1][x+1] && !grid[y+1][x+2] && !grid[y][x+1]) {
                 grid[y+1][x] = grid[y+1][x+1] = grid[y+1][x+2] = grid[y][x+1] = true;
                 return 0;
             }
             break;
         case 3: // ├
-            if (x < 0 || y < 0 || x+1 >= size || y+2 >= size) return 1;
+            if (x < 0 || y < 0 || x+1 >= sizeX || y+2 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y+1][x] && !grid[y+2][x] && !grid[y+1][x+1]) {
                 grid[y][x] = grid[y+1][x] = grid[y+2][x] = grid[y+1][x+1] = true;
                 return 0;
@@ -90,32 +65,31 @@ int pieceT(int x, int y, int rotate, bool grid[35][35], int size) {
     }
     return 1;
 }
-int pieceL(int x, int y, int rotate, bool grid[35][35], int size) {
-    x--; y--;
+int pieceL(int x, int y, int rotate, bool grid[35][35], int sizeX, int sizeY) {
     switch (rotate % 4) {
         case 0:
-            if (x < 0 || y < 0 || x+1 >= size || y+2 >= size) return 1;
+            if (x < 0 || y < 0 || x+1 >= sizeX || y+2 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y+1][x] && !grid[y+2][x] && !grid[y+2][x+1]) {
                 grid[y][x] = grid[y+1][x] = grid[y+2][x] = grid[y+2][x+1] = true;
                 return 0;
             }
             break;
         case 1:
-            if (x < 0 || y < 0 || x+2 >= size || y+1 >= size) return 1;
+            if (x < 0 || y < 0 || x+2 >= sizeX || y+1 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y][x+1] && !grid[y][x+2] && !grid[y+1][x+2]) {
                 grid[y][x] = grid[y][x+1] = grid[y][x+2] = grid[y+1][x+2] = true;
                 return 0;
             }
             break;
         case 2:
-            if (x < 0 || y < 0 || x+1 >= size || y+2 >= size) return 1;
+            if (x < 0 || y < 0 || x+1 >= sizeX || y+2 >= sizeY) return 1;
             if (!grid[y][x+1] && !grid[y+1][x+1] && !grid[y+2][x+1] && !grid[y][x]) {
                 grid[y][x+1] = grid[y+1][x+1] = grid[y+2][x+1] = grid[y][x] = true;
                 return 0;
             }
             break;
         case 3:
-            if (x < 0 || y < 0 || x+2 >= size || y+1 >= size) return 1;
+            if (x < 0 || y < 0 || x+2 >= sizeX || y+1 >= sizeY) return 1;
             if (!grid[y+1][x] && !grid[y+1][x+1] && !grid[y+1][x+2] && !grid[y][x]) {
                 grid[y+1][x] = grid[y+1][x+1] = grid[y+1][x+2] = grid[y][x] = true;
                 return 0;
@@ -124,32 +98,32 @@ int pieceL(int x, int y, int rotate, bool grid[35][35], int size) {
     }
     return 1;
 }
-int pieceJ(int x, int y, int rotate, bool grid[35][35], int size) {
-    x--; y--;
+int pieceJ(int x, int y, int rotate, bool grid[35][35], int sizeX, int sizeY) {
+
     switch (rotate % 4) {
         case 0:
-            if (x < 0 || y < 0 || x+1 >= size || y+2 >= size) return 1;
+            if (x < 0 || y < 0 || x+1 >= sizeX || y+2 >= sizeY) return 1;
             if (!grid[y][x+1] && !grid[y+1][x+1] && !grid[y+2][x+1] && !grid[y+2][x]) {
                 grid[y][x+1] = grid[y+1][x+1] = grid[y+2][x+1] = grid[y+2][x] = true;
                 return 0;
             }
             break;
         case 1:
-            if (x < 0 || y < 0 || x+2 >= size || y+1 >= size) return 1;
+            if (x < 0 || y < 0 || x+2 >= sizeX || y+1 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y+1][x] && !grid[y+1][x+1] && !grid[y+1][x+2]) {
                 grid[y][x] = grid[y+1][x] = grid[y+1][x+1] = grid[y+1][x+2] = true;
                 return 0;
             }
             break;
         case 2:
-            if (x < 0 || y < 0 || x+1 >= size || y+2 >= size) return 1;
+            if (x < 0 || y < 0 || x+1 >= sizeX || y+2 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y+1][x] && !grid[y+2][x] && !grid[y][x+1]) {
                 grid[y][x] = grid[y+1][x] = grid[y+2][x] = grid[y][x+1] = true;
                 return 0;
             }
             break;
         case 3:
-            if (x < 0 || y < 0 || x+2 >= size || y+1 >= size) return 1;
+            if (x < 0 || y < 0 || x+2 >= sizeX || y+1 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y][x+1] && !grid[y][x+2] && !grid[y+1][x]) {
                 grid[y][x] = grid[y][x+1] = grid[y][x+2] = grid[y+1][x] = true;
                 return 0;
@@ -158,12 +132,12 @@ int pieceJ(int x, int y, int rotate, bool grid[35][35], int size) {
     }
     return 1;
 }
-int pieceS(int x, int y, int rotate, bool grid[35][35], int size) {
-    x--; y--;
+int pieceS(int x, int y, int rotate, bool grid[35][35], int sizeX, int sizeY) {
+
     switch (rotate % 4) {
         case 0:
         case 2:
-            if (x < 0 || y < 0 || x+2 >= size || y+1 >= size) return 1;
+            if (x < 0 || y < 0 || x+2 >= sizeX || y+1 >= sizeY) return 1;
             if (!grid[y][x+1] && !grid[y][x+2] && !grid[y+1][x] && !grid[y+1][x+1]) {
                 grid[y][x+1] = grid[y][x+2] = grid[y+1][x] = grid[y+1][x+1] = true;
                 return 0;
@@ -171,7 +145,7 @@ int pieceS(int x, int y, int rotate, bool grid[35][35], int size) {
             break;
         case 1:
         case 3:
-            if (x < 0 || y < 0 || x+1 >= size || y+2 >= size) return 1;
+            if (x < 0 || y < 0 || x+1 >= sizeX || y+2 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y+1][x] && !grid[y+1][x+1] && !grid[y+2][x+1]) {
                 grid[y][x] = grid[y+1][x] = grid[y+1][x+1] = grid[y+2][x+1] = true;
                 return 0;
@@ -180,13 +154,11 @@ int pieceS(int x, int y, int rotate, bool grid[35][35], int size) {
     }
     return 1;
 }
-
-int pieceZ(int x, int y, int rotate, bool grid[35][35], int size) {
-    x--; y--;
+int pieceZ(int x, int y, int rotate, bool grid[35][35], int sizeX, int sizeY) {
     switch (rotate % 4) {
         case 0:
         case 2:
-            if (x < 0 || y < 0 || x+2 >= size || y+1 >= size) return 1;
+            if (x < 0 || y < 0 || x+2 >= sizeX || y+1 >= sizeY) return 1;
             if (!grid[y][x] && !grid[y][x+1] && !grid[y+1][x+1] && !grid[y+1][x+2]) {
                 grid[y][x] = grid[y][x+1] = grid[y+1][x+1] = grid[y+1][x+2] = true;
                 return 0;
@@ -194,7 +166,7 @@ int pieceZ(int x, int y, int rotate, bool grid[35][35], int size) {
             break;
         case 1:
         case 3:
-            if (x < 0 || y < 0 || x+1 >= size || y+2 >= size) return 1;
+            if (x < 0 || y < 0 || x+1 >= sizeX || y+2 >= sizeY) return 1;
             if (!grid[y+1][x] && !grid[y][x+1] && !grid[y+1][x+1] && !grid[y+2][x]) {
                 grid[y+1][x] = grid[y][x+1] = grid[y+1][x+1] = grid[y+2][x] = true;
                 return 0;
@@ -223,11 +195,44 @@ void drawGrid(bool grid[35][35], int size) {
     }
 }
 
+void drawBoard(bool grid[4][16], int board[3], int rotate) {
+    // 1. Réinitialiser
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 16; j++)
+            grid[i][j] = false;
+
+    // Placer les pièces
+    for (int i = 0; i < 16; i+=5) {
+        switch (board[i]) {
+            case 0: pieceO(i, 0, grid, 16, 4); printf("%d // ",i); break;
+            case 1: pieceI(i, 0, rotate, grid, 16, 4); printf("I "); break;
+            case 2: pieceT(i, 0, rotate, grid, 16, 4); printf("T "); break;
+            case 3: pieceL(i, 0, rotate, grid, 16, 4); printf("L "); break;
+            case 4: pieceJ(i, 0, rotate, grid, 16, 4); printf("J "); break;
+            case 5: pieceS(i, 0, rotate, grid, 16, 4); printf("S%d // ",i); break;
+            case 6: pieceZ(i, 0, rotate, grid, 16, 4); printf("Z "); break;
+        }
+    }
+    // Dessiner la grille
+    printf("\n    1              2              3 \n");
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 16; j++) {
+            if (grid[i][j] == true){ printf("[X]");} else{printf("[ ]");};
+        }
+        printf("\n");
+    }
+}
+
 int main() {
-    int size;
-    int c;
-    bool grid[35][35] = {}; // tableau rempli de false par défaut
     srand(time(NULL));
+    int size,c,x,y,rotate = 0;
+    int board[3];
+    bool boardDraw[4][16];
+    for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 16; j++)
+            boardDraw[i][j] = false;
+
+
 
     do {
         printf("Quel est la taille de la grille [5-35] : ");
@@ -241,8 +246,7 @@ int main() {
             printf("La taille est invalide, cela doit être compris entre 5 et 35.\n\n");
         }
     } while (size > 35 || size < 5);
-
-    // initialisation explicite optionnelle
+    bool grid[size][size] = {};
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             grid[i][j] = false;
@@ -250,18 +254,11 @@ int main() {
     }
 
     drawGrid(grid, size);
+    printf("\n\n\n");
 
-    int x = 6, y = 6, rotate = 0;
-    if (pieceL(x, y,rotate, grid, size)==1) {
-        printf("donne moi un x : ");
-        scanf("%d", &x);
-        printf("donne moi un y : ");
-        scanf("%d", &y);
-        printf("donne moi un rotate : ");
-        scanf("%d", &rotate);
-        pieceL(x, y,rotate, grid, size);
-    };
+    for (int i = 0; i < 3; i++){board[i] = rand() % 1;}
 
-    drawGrid(grid, size);
+
+    drawBoard(boardDraw,board,rotate);
     return 0;
 }
