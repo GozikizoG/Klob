@@ -4,7 +4,7 @@
 #include <stdbool.h> // pour bool, true, false
 
 int pieceO(int x, int y, bool grid[35][35], int sizeX, int sizeY) {
-    if (x < 0 || y < 0 || x+1 >= sizeX || y+1 >= sizeY) return 1;
+    if (x < 0 || y < 0 || x+1 > sizeX || y+1 > sizeY) return 1;
     if (!grid[y][x] && !grid[y][x+1] && !grid[y+1][x] && !grid[y+1][x+1]) {
         grid[y][x] = grid[y][x+1] = grid[y+1][x] = grid[y+1][x+1] = true;
         return 0;
@@ -195,29 +195,35 @@ void drawGrid(bool grid[35][35], int size) {
     }
 }
 
-void drawBoard(bool grid[4][16], int board[3], int rotate) {
+void drawBoard(bool grid[35][35], int board[3], int rotate) {
+    int xoff = 0;
     // 1. Réinitialiser
     for (int i = 0; i < 4; i++)
         for (int j = 0; j < 16; j++)
             grid[i][j] = false;
 
     // Placer les pièces
-    for (int i = 0; i < 16; i+=5) {
+    for (int i = 0; i < 3; i++, xoff+=5) {
         switch (board[i]) {
-            case 0: pieceO(i, 0, grid, 16, 4); printf("%d // ",i); break;
-            case 1: pieceI(i, 0, rotate, grid, 16, 4); printf("I "); break;
-            case 2: pieceT(i, 0, rotate, grid, 16, 4); printf("T "); break;
-            case 3: pieceL(i, 0, rotate, grid, 16, 4); printf("L "); break;
-            case 4: pieceJ(i, 0, rotate, grid, 16, 4); printf("J "); break;
-            case 5: pieceS(i, 0, rotate, grid, 16, 4); printf("S%d // ",i); break;
-            case 6: pieceZ(i, 0, rotate, grid, 16, 4); printf("Z "); break;
+            default: pieceO(xoff, 0, grid, 16, 4); printf("%d // ",xoff); break;
+            // case 1: pieceI(i, 0, rotate, grid, 16, 4); printf("I "); break;
+            // case 2: pieceT(i, 0, rotate, grid, 16, 4); printf("T "); break;
+            // case 3: pieceL(i, 0, rotate, grid, 16, 4); printf("L "); break;
+            // case 4: pieceJ(i, 0, rotate, grid, 16, 4); printf("J "); break;
+            // case 5: pieceS(i, 0, rotate, grid, 16, 4); printf("S%d // ",i); break;
+            // case 6: pieceZ(i, 0, rotate, grid, 16, 4); printf("Z "); break;
         }
     }
     // Dessiner la grille
     printf("\n    1              2              3 \n");
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 16; j++) {
-            if (grid[i][j] == true){ printf("[X]");} else{printf("[ ]");};
+
+            if (grid[i][j] == true) {
+                printf("[X]");
+            } else {
+                printf("[ ]");
+            };
         }
         printf("\n");
     }
@@ -227,10 +233,9 @@ int main() {
     srand(time(NULL));
     int size,c,x,y,rotate = 0;
     int board[3];
-    bool boardDraw[4][16];
-    for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 16; j++)
-            boardDraw[i][j] = false;
+    bool boardDraw[35][35];
+    bool grid[35][35] = {};
+
 
 
 
@@ -246,10 +251,14 @@ int main() {
             printf("La taille est invalide, cela doit être compris entre 5 et 35.\n\n");
         }
     } while (size > 35 || size < 5);
-    bool grid[size][size] = {};
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             grid[i][j] = false;
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 16; j++) {
+            boardDraw[i][j] = false;
         }
     }
 
@@ -260,5 +269,9 @@ int main() {
 
 
     drawBoard(boardDraw,board,rotate);
+
+    pieceT(1,1,1,grid,size,size);
+    drawGrid(grid, size);
+
     return 0;
 }
