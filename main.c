@@ -256,6 +256,7 @@ int main() {
     srand(time(NULL));
     int size,c,x,y,score = 0,rotate = 0, temp;
     int board[3];
+    char tempc;
     bool end = false;
     bool boardDraw[35][35];
     bool grid[35][35] = {};
@@ -303,25 +304,28 @@ int main() {
                 scanf("%d-%d",&x,&y);
                 x--;y--;
                 switch (board[temp-1]) {
-                    case 0 :if (pieceO(x,y,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
-                    case 1 :if (pieceI(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
-                    case 2 :if (pieceT(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
-                    case 3 :if (pieceL(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
-                    case 4 :if (pieceJ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
-                    case 5 :if (pieceS(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
-                    case 6 :if (pieceZ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
+                    case 0 :if (pieceO(x,y,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}else{printf("\n Emplacement non valide. \n");} ; break;
+                    case 1 :if (pieceI(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}else{printf("\n Emplacement non valide. \n");} ; break;
+                    case 2 :if (pieceT(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}else{printf("\n Emplacement non valide. \n");} ; break;
+                    case 3 :if (pieceL(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}else{printf("\n Emplacement non valide. \n");} ; break;
+                    case 4 :if (pieceJ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}else{printf("\n Emplacement non valide. \n");} ; break;
+                    case 5 :if (pieceS(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}else{printf("\n Emplacement non valide. \n");} ; break;
+                    case 6 :if (pieceZ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}else{printf("\n Emplacement non valide. \n");} ; break;
                 }
                 break;
             case 9:
-                printf("Tu as abandonne.");
-                end = true;
+                printf("Es-tu sure d'abandonner ? (`y` ou `n`) : ");
+                scanf("%d",&tempc);
+                if (tempc == "y") {
+                    end = true;
+                }
                 break;
         }
         temp = 0;
         for (int i = 0; i < size; i++) {
             bool full = true;
             for (int j = 0; j < size; j++) {
-                if (!grid[i][j]) { // si une case est vide -> pas pleine
+                if (!grid[i][j]) {
                     full = false;
                     break;
                 }
@@ -330,7 +334,6 @@ int main() {
                 for (int j = 0; j < size; j++) {
                     grid[i][j] = false;
                 }
-
             }
         }
         for (int j = 0; j < size; j++) {
@@ -345,9 +348,9 @@ int main() {
                 for (int i = 0; i < size; i++) {
                     grid[i][j] = false;
                 }
-
             }
         }
     } while (end != true);
+    printf("TON SCORE FINAL EST DE : %d",score);
     return 0;
 } //14700
