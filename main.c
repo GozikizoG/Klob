@@ -228,7 +228,7 @@ void drawBoard(bool grid[35][35], int board[3], int rotate) {
 
 int menu(int score,int *rotate) {
     int answer = 0;
-    printf("\n[SCORE = %d]\n\n1. Jouer une piece\n2. Tourner les pieces (90 degres horraire)\n3. Tourner les pieces (90 degres anti-horraire)\n4. Abandonner\n",score);
+    printf("\n[SCORE = %d]\n\n1. Jouer une piece\n2. Tourner les pieces (90 degres horraire)\n3. Tourner les pieces (90 degres anti-horraire)\n4. Abandonner\n\n Choix : ",score);
     scanf("%d", &answer);
     switch (answer) {
         default:
@@ -299,18 +299,17 @@ int main() {
             case 1:
             case 2:
             case 3:
-                printf("Tu veux jouer la %d ce qui est la piece numero %d\n",temp,board[temp-1]);
                 printf("Donne un x et y separe par un tiret, (ex : \"5-12\") :\n");
                 scanf("%d-%d",&x,&y);
                 x--;y--;
                 switch (board[temp-1]) {
-                    case 0 :if (pieceO(x,y,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
-                    case 1 :if (pieceI(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
-                    case 2 :if (pieceT(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
-                    case 3 :if (pieceL(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
-                    case 4 :if (pieceJ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
-                    case 5 :if (pieceS(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
-                    case 6 :if (pieceZ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
+                    case 0 :if (pieceO(x,y,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
+                    case 1 :if (pieceI(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
+                    case 2 :if (pieceT(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
+                    case 3 :if (pieceL(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
+                    case 4 :if (pieceJ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
+                    case 5 :if (pieceS(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
+                    case 6 :if (pieceZ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7; score+=4;}}; break;
                 }
                 break;
             case 9:
@@ -318,6 +317,37 @@ int main() {
                 end = true;
                 break;
         }
+        temp = 0;
+        for (int i = 0; i < size; i++) {
+            bool full = true;
+            for (int j = 0; j < size; j++) {
+                if (!grid[i][j]) { // si une case est vide -> pas pleine
+                    full = false;
+                    break;
+                }
+            }
+            if (full) {
+                for (int j = 0; j < size; j++) {
+                    grid[i][j] = false;
+                }
+
+            }
+        }
+        for (int j = 0; j < size; j++) {
+            bool full = true;
+            for (int i = 0; i < size; i++) {
+                if (!grid[i][j]) {
+                    full = false;
+                    break;
+                }
+            }
+            if (full) {
+                for (int i = 0; i < size; i++) {
+                    grid[i][j] = false;
+                }
+
+            }
+        }
     } while (end != true);
     return 0;
-}
+} //14700
