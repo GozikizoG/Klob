@@ -261,9 +261,6 @@ int main() {
     bool boardDraw[35][35];
     bool grid[35][35] = {};
 
-
-
-
     do {
         printf("Quel est la taille de la grille [5-35] : ");
         if (scanf("%d", &size) != 1) {
@@ -315,8 +312,8 @@ int main() {
                 break;
             case 9:
                 printf("Es-tu sure d'abandonner ? (`y` ou `n`) : ");
-                scanf("%d",&tempc);
-                if (tempc == "y") {
+                scanf(" %c",&tempc);
+                if (tempc == 'y'){
                     end = true;
                 }
                 break;
@@ -330,11 +327,7 @@ int main() {
                     break;
                 }
             }
-            if (full) {
-                for (int j = 0; j < size; j++) {
-                    grid[i][j] = false;
-                }
-            }
+            if (full){for (int j = 0; j < size; j++){grid[i][j] = false;}}
         }
         for (int j = 0; j < size; j++) {
             bool full = true;
@@ -344,12 +337,7 @@ int main() {
                     break;
                 }
             }
-            if (full) {
-                for (int i = 0; i < size; i++) {
-                    grid[i][j] = false;
-                }
-            }
-        }
+            if (full) {for (int i = 0; i < size; i++){grid[i][j] = false;}}}
     } while (end != true);
     printf("TON SCORE FINAL EST DE : %d",score);
     return 0;
