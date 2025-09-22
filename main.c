@@ -228,18 +228,18 @@ void drawBoard(bool grid[35][35], int board[3], int rotate) {
 
 int menu(int score,int *rotate) {
     int answer = 0;
-    printf("Ton score est de %d\n1. Jouer une piece\n2. Tourner les pieces (90° horraire)\n3. Tourner les pieces (90° anti-horraire)\n4. Abandonner\n",score);
+    printf("\n[SCORE = %d]\n\n1. Jouer une piece\n2. Tourner les pieces (90 degres horraire)\n3. Tourner les pieces (90 degres anti-horraire)\n4. Abandonner\n",score);
     scanf("%d", &answer);
     switch (answer) {
         default:
             printf("Erreur\n");
             break;
         case 1:
-            printf("Parmis les 3 pieces, laquel veux tu jouer ?");
-            scanf("%d", answer);
+            printf("Parmis les 3 pieces, laquel veux tu jouer : ");
+            scanf("%d", &answer);
             if (answer==1||answer==2||answer==3){return answer;}
             printf("Erreur\n");
-            return 0;
+            break;
         case 2:
             (*rotate) = (*rotate % 4 + 3) % 4;
             return 0;
@@ -247,7 +247,6 @@ int menu(int score,int *rotate) {
             (*rotate) = (*rotate % 4 + 5) % 4;
             return 0;
         case 4:
-
             return 9;
     }
     return 0;
@@ -255,8 +254,7 @@ int menu(int score,int *rotate) {
 
 int main() {
     srand(time(NULL));
-    int size,c,x,y,score = 0;
-    int rotate = 2;
+    int size,c,x,y,score = 0,rotate = 0, temp;
     int board[3];
     bool end = false;
     bool boardDraw[35][35];
@@ -287,34 +285,39 @@ int main() {
             boardDraw[i][j] = false;
         }
     }
+    for (int i = 0; i < 3; i++){board[i] = rand() % 7;}
 
     do {
         drawGrid(grid, size);
         printf("\n\n\n");
-        for (int i = 0; i < 3; i++){board[i] = rand() % 7;} // ce sera à déplacer à l'endroit ou on confirme qu'ona jouer
         drawBoard(boardDraw,board,rotate);
-        switch (menu(score,&rotate)) {
+        temp = menu(score,&rotate);
+        switch (temp) {
             default:
+                printf("$d \n",temp);
                 break;
             case 1:
-                printf("Tu veux jouer la 1");
-                break;
             case 2:
-                printf("Tu veux jouer la 2");
-                break;
             case 3:
-                printf("Tu veux jouer la 3");
+                printf("Tu veux jouer la %d ce qui est la piece numero %d\n",temp,board[temp-1]);
+                printf("Donne un x et y separe par un tiret, (ex : \"5-12\") :\n");
+                scanf("%d-%d",&x,&y);
+                x--;y--;
+                switch (board[temp-1]) {
+                    case 0 :if (pieceO(x,y,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
+                    case 1 :if (pieceI(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
+                    case 2 :if (pieceT(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
+                    case 3 :if (pieceL(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
+                    case 4 :if (pieceJ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
+                    case 5 :if (pieceS(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
+                    case 6 :if (pieceZ(x,y,rotate,grid,size,size)==0){for (int i = 0; i < 3; i++){board[i] = rand() % 7;}}; break;
+                }
                 break;
             case 9:
                 printf("Tu as abandonne.");
                 end = true;
                 break;
-
         }
     } while (end != true);
-
-
-
-
     return 0;
 }
