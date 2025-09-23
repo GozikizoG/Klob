@@ -252,6 +252,40 @@ int menu(int score,int *rotate) {
     return 0;
 }
 
+int check(bool grid[35][35], int size, int board[3]) {
+    bool copy[35][35];
+    int ok;
+
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            copy[i][j] = grid[i][j];
+        }
+    }
+    for (int b = 0; b < 3; b++) {
+        for (int r = 0; r < 4; r++) {
+            for (int y = 0; y < size; y++) {
+                for (int x = 0; x < size; x++) {
+                    ok = 1;
+                    switch (board[b]) {
+                        case 0: ok = pieceO(x,y,copy,size,size); break;
+                        case 1: ok = pieceI(x,y,r,copy,size,size); break;
+                        case 2: ok = pieceT(x,y,r,copy,size,size); break;
+                        case 3: ok = pieceL(x,y,r,copy,size,size); break;
+                        case 4: ok = pieceJ(x,y,r,copy,size,size); break;
+                        case 5: ok = pieceS(x,y,r,copy,size,size); break;
+                        case 6: ok = pieceZ(x,y,r,copy,size,size); break;
+                    }
+                    if (ok == 0) {
+                        return 1;
+                    }
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
 int main() {
     srand(time(NULL));
     int size,c,x,y,score = 0,rotate = 0, temp;
@@ -339,7 +373,9 @@ int main() {
             }
             if (full) {for (int i = 0; i < size; i++){grid[i][j] = false;}}}
 
+        if (check(grid,size,board)==0){printf("GAME OVER - Tu ne peux plus placer de pieces...");end = true;}
+
     } while (end != true);
     printf("TON SCORE FINAL EST DE : %d",score);
     return 0;
-} //14700
+}
